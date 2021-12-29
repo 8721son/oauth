@@ -28,7 +28,7 @@ public class UserEntity {
     private String email;
 
     private String oauthId;
-    private ProviderType provider;
+    private String provider;
 
     @Enumerated(EnumType.STRING)
     private UserRoleType role;
@@ -40,10 +40,11 @@ public class UserEntity {
     private LocalDateTime updateDate;
 
     @Builder
-    public UserEntity(String nickname, String email, String picture, UserRoleType role){
+    public UserEntity(String nickname, String email, String picture, UserRoleType role,String provider){
         this.nickname = nickname;
         this.email = email;
         this.role = role;
+        this.provider = provider;
     }
 
     public UserEntity update(String nickname){
