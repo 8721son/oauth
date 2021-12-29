@@ -28,22 +28,18 @@ public class OAuthUserService implements OAuth2UserService<OAuth2UserRequest, OA
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        // OAuth2 서비스 id (구글, 카카오, 네이버)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        // OAuth2 로그인 진행 시 키가 되는 필드 값(PK)
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-        // OAuth2UserService
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
         UserEntity user = saveOrUpdate(attributes);
-        httpSession.setAttribute("user", new UserDTO(user)); // SessionUser (직렬화된 dto 클래스 사용)
+        httpSession.setAttribute("user", new UserDTO(user));
 
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
     }
 
-    // 유저 생성 및 수정 서비스 로직
     private UserEntity saveOrUpdate(OAuthAttributes attributes){
         UserEntity user = userRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName()))
